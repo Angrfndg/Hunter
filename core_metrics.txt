@@ -1,0 +1,118 @@
+# HUNTER - CORE METRICS
+
+## GAME CONCEPT
+Hunter is a top-down shooter game where the player navigates through a procedurally generated forest environment, battling waves of enemies. The game features multiple weapon types, special items, and an increasing challenge as waves progress.
+
+## WORLD PROPERTIES
+- World Size: 9000x9000 pixels
+- Screen Size: 800x600 pixels
+- Frame Rate: 60 FPS
+- Environment: Procedurally generated forest with trees as obstacles
+- Coordinate Grid: 9x9 grid with letter-number coordinates (A1-I9)
+
+## PLAYER ATTRIBUTES
+- Health: 100 HP
+- Movement Speed: 8 pixels per frame
+- Collision Damage to Enemies: 5 HP
+- Collision Rate: 1.0 (1 hit per second)
+- Max Stored Medkits: 5
+- Starting Position: Random valid spawn position
+
+## WEAPONS
+| Weapon Type      | Damage | Fire Rate (shots/sec) | Ammo    | Special Properties                    |
+|------------------|--------|----------------------|---------|--------------------------------------|
+| Pistol           | 1      | 0.5                  | Infinite| Standard single shot                 |
+| SMG              | 1      | 10                   | 300     | Rapid-fire, low damage              |
+| Assault Rifle    | 2      | 5                    | 200     | Balanced fire rate and damage       |
+| Shotgun          | 1      | 1                    | 50      | 5 bullets in 60-degree spread       |
+| Rocket Launcher  | 100    | 0.5                  | 20      | Creates explosion on impact         |
+
+## ENEMIES
+| Enemy Type | Health | Damage | Color  | Symbol | Collision Rate | Special Properties                 |
+|------------|--------|--------|--------|--------|----------------|-----------------------------------|
+| Standard   | 1      | 0.33   | Red    | ●      | 1.0            | Speed: 4 (faster than others)     |
+| Shooter    | 1      | 1.0    | Blue   | ▲      | 1.0            | Ranged attacks, fire rate: 1/sec  |
+| Assault    | 1      | 6.67   | Orange | ★      | 1.0            | Explodes on death, deals AOE damage|
+| Officer    | 10     | 1.0    | Purple | ◆      | 1.0            | Higher health, stronger attacks   |
+
+## ITEMS & PICKUPS
+### Medkits
+- Appearance: Green cross
+- Effect: Heals 50 HP when used, or can be stored (max 5)
+- Spawn Chance: 50% from killed enemies
+
+### Ammo Pickups
+| Weapon Type      | Ammo Amount Per Pickup |
+|------------------|------------------------|
+| SMG              | 50                     |
+| Assault Rifle    | 30                     |
+| Shotgun          | 10                     |
+| Rocket Launcher  | 3                      |
+
+### Explosive Barrels
+- Appearance: Brown barrel with red warning symbol
+- Health: 1 HP (explodes on any damage)
+- Explosion Damage: 100 HP (inner radius), 50 HP (outer radius)
+- Explosion Radius: 25px inner, 50px outer
+
+## GAME MECHANICS
+### Wave System
+- Initial wave: 20 enemies
+- Subsequent waves: 10 base enemies × 1.5^(wave-1)
+- Special enemies: 30% of total enemies (capped at 3)
+- Special distribution: 1 Shooter, 1 Assault, 1 Officer
+
+### Scoring
+- Regular enemy kill: 10 points
+- Assault enemy kill: 20 points
+- High score tracked between games
+
+### Status Effects
+| Status      | Duration | Effect                             |
+|-------------|----------|-----------------------------------|
+| Idle        | 5000ms   | Enemy despawns after warning      |
+| Attacking   | Indefinite| Enemy keeps attacking            |
+| Stunned     | 2000ms   | Enemy unable to move/attack       |
+| Burning     | 5000ms   | 1 damage per second               |
+| Frozen      | 3000ms   | Movement speed reduced by 50%     |
+
+### Game States
+- MENU: Main menu screen
+- PLAYING: Active gameplay
+- GAME_OVER: End screen with score
+- PAUSED: Game paused
+
+## AI & PATHFINDING
+- Grid Size: 50x50 pixels
+- Pathfinding Update Rate: 2000ms (off-screen), 500ms (on-screen)
+- Path Smoothing Distance: 20 pixels
+- Path Cache Size: 1000 paths
+- Enemy AI: Follows player using A* pathfinding
+- Enemy behavior: Varies by type (melee, ranged, explosive)
+
+## OPTIMIZATION
+- Quadrant-based sprite management
+- Selective updates based on visibility
+- Path caching and reuse
+- Pre-rendered environment elements 
+
+## VERSION CONTROL
+The game is managed through a versioning system in the 'versions' folder:
+
+### Ver0.1 (Base Game)
+- Original implementation with standard spawn mechanics
+- Basic enemy behavior and spawn logic
+- Simple map generation and navigation
+
+### Ver0.2 (Performance Optimizations)
+- Implemented visibility-based rendering (only rendering on-screen objects)
+- Added quadrant-based sprite management
+- Optimized map rendering and collision detection
+- Improved enemy AI pathfinding with caching
+- Performance improved from ~10 FPS to ~59 FPS (6x improvement)
+
+### Ver0.2 (Custom Spawn Points)
+- Added predefined enemy spawn squares using coordinate grid
+- Implemented intelligent spawn point selection based on player position
+- Enemies spawn from various directions with preference for closest positions
+- Uses coordinates: i9, e3, e6, c4, h3, e5, i1, i7, d2, f7, f3, f4, f5, f6 
